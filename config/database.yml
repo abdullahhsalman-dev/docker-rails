@@ -19,10 +19,11 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-
 development:
   <<: *default
   database: docker_testing_development
+  username: postgres
+  password: postgres
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -82,8 +83,8 @@ production:
   primary: &primary_production
     <<: *default
     database: docker_testing_production
-    username: docker_testing
-    password: <%= ENV["DOCKER_TESTING_DATABASE_PASSWORD"] %>
+    username: postgres
+    password: postgres
   cache:
     <<: *primary_production
     database: docker_testing_production_cache
