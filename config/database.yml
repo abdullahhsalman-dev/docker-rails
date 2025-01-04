@@ -16,6 +16,10 @@ development:
 test:
   <<: *default
   database: docker_testing_test
+  username: postgres
+  password: postgres
+  host: db
+  port: 5432
 
 production:
   primary: &primary_production
