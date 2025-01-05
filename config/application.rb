@@ -10,7 +10,7 @@ module DockerTesting
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
-
+    config.secret_key_base = "ea13594d4a68c02da85d39e5691d6ca6d76719f04273a2c6bbeb740b84b1bb24ad6a3cb8ee0c18e07dbb610a191eec3b57c9a63a70f1c26fe9ab8d4826f15013"
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.

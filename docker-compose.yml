@@ -12,6 +12,7 @@ services:
     depends_on:
       - db
     environment:
+      RAILS_MASTER_KEY: 1d0cb4477980435f2512241ecda7d729
       DATABASE_HOST: db
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
