@@ -1,3 +1,36 @@
+# version: "3.8"
+
+# services:
+#   app:
+#     build:
+#       context: .
+#     container_name: rails_app
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - .:/app
+#     depends_on:
+#       - db
+#     environment:
+#       RAILS_MASTER_KEY: 1d0cb4477980435f2512241ecda7d729
+#       DATABASE_HOST: db
+#       DATABASE_USER: postgres
+#       DATABASE_PASSWORD: postgres
+
+#   db:
+#     image: postgres:14
+#     container_name: postgres_db
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:
+
 version: "3.8"
 
 services:
@@ -6,16 +39,19 @@ services:
       context: .
     container_name: rails_app
     ports:
-      - "3000:3000"
+      - "3000:3000" # Expose Rails development server on port 3000
     volumes:
-      - .:/app
+      - .:/rails # Mount the current directory to the container for live code changes
+      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
+      - tmp:/rails/tmp # Persist tmp folder for session/cache
     depends_on:
       - db
     environment:
-      RAILS_MASTER_KEY: 1d0cb4477980435f2512241ecda7d729
+      RAILS_ENV: development
       DATABASE_HOST: db
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'" # Ensure the server starts correctly and handles PID files
 
   db:
     image: postgres:14
@@ -24,9 +60,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5432:5432" # Expose PostgreSQL on port 5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data # Persist database data across container restarts
 
 volumes:
   postgres_data:
+  bundle_cache:
+  tmp:

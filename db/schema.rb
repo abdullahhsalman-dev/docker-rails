@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_04_183445) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_05_153141) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "buses", force: :cascade do |t|
+    t.string "number"
+    t.integer "capacity"
+    t.bigint "route_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["route_id"], name: "index_buses_on_route_id"
+  end
 
   create_table "comments", force: :cascade do |t|
     t.text "content"
@@ -33,6 +42,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_183445) do
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
+  create_table "routes", force: :cascade do |t|
+    t.string "name"
+    t.string "start_point"
+    t.string "end_point"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -45,6 +62,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_04_183445) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "buses", "routes"
   add_foreign_key "comments", "posts"
   add_foreign_key "comments", "users"
   add_foreign_key "posts", "users"
