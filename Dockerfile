@@ -207,6 +207,9 @@
 # CMD ["./bin/thrust", "./bin/rails", "server"]
 
 
+# ============= start of development docker file
+
+
 # syntax=docker/dockerfile:1
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
@@ -290,3 +293,9 @@ EXPOSE 3000
 
 # Start Rails server in development mode with live reload
 CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
+
+
+
+# =================== end of development dockerfile =================
+
+

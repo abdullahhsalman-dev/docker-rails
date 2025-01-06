@@ -31,31 +31,76 @@
 # volumes:
 #   postgres_data:
 
+#---------------------- staging file for single container --------------------------------
 
-# defining the stable verison of the docker compose
+# # defining the stable verison of the docker compose
+# version: "3.8"
+
+# # define the services(ie: container) in the application.
+# # is code se 2 container run ho gay. 1 rails app 2 database.
+# services:
+#   # define the rails application service(container)
+#   app:
+#     # specifies how to build image for this container
+#     build:
+#       #     Sets the build context to the current directory (where the Dockerfile resides).
+#       # Docker will use the Dockerfile in this directory to build the image.
+#       context: .
+#       # set the container name easier for logs
+#     container_name: rails_app
+#     # map the container ports to the localport so that we can run it on browser
+#     ports:
+#       - "3000:3000" # Expose Rails development server on port 3000
+#     volumes:
+#       - .:/rails # Mount the current directory to the container for live code changes
+#       - bundle_cache:/usr/local/bundle # Persist gems across container restarts
+#       - tmp:/rails/tmp # Persist tmp folder for session/cache
+#     # specifies the app service depends upon db service.
+#     # ensure db service start before the app service
+#     depends_on:
+#       - db
+#     environment:
+#       RAILS_ENV: development
+#       DATABASE_HOST: db
+#       DATABASE_USER: postgres
+#       DATABASE_PASSWORD: postgres
+#     command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'" # Ensure the server starts correctly and handles PID files
+#   # define the postgresql database service.
+#   db:
+#     image: postgres:14
+#     container_name: postgres_db
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD:
+#         postgres
+#         # Maps port 5432 of the host to port 5432 inside the container.
+#         # Allows the PostgreSQL database to be accessible from the host (useful for debugging with tools like pgAdmin).
+#     ports:
+#       - "5432:5432" # Expose PostgreSQL on port 5432
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data # Persist database data across container restarts
+
+# volumes:
+#   postgres_data:
+#   bundle_cache:
+#   tmp:
+
+# ---------------- end of single file for staging container -----------------
+
 version: "3.8"
 
-# define the services(ie: container) in the application. 
-# is code se 2 container run ho gay. 1 rails app 2 database.
 services:
-  # define the rails application service(container)
-  app:
-  # specifies how to build image for this container
+  # First instance of the Rails application
+  app1:
     build:
-    #     Sets the build context to the current directory (where the Dockerfile resides).
-    # Docker will use the Dockerfile in this directory to build the image.
       context: .
-      # set the container name easier for logs 
-    container_name: rails_app
-    # map the container ports to the localport so that we can run it on browser
+    container_name: rails_app_1
     ports:
       - "3000:3000" # Expose Rails development server on port 3000
     volumes:
       - .:/rails # Mount the current directory to the container for live code changes
       - bundle_cache:/usr/local/bundle # Persist gems across container restarts
       - tmp:/rails/tmp # Persist tmp folder for session/cache
-    # specifies the app service depends upon db service.
-    # ensure db service start before the app service
     depends_on:
       - db
     environment:
@@ -63,16 +108,55 @@ services:
       DATABASE_HOST: db
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
-    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'" # Ensure the server starts correctly and handles PID files
-  # define the postgresql database service.
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
+
+  # Second instance of the Rails application
+  app2:
+    build:
+      context: .
+    container_name: rails_app_2
+    ports:
+      - "3001:3000" # Expose Rails development server on port 3001
+    volumes:
+      - .:/rails # Mount the current directory to the container for live code changes
+      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
+      - tmp:/rails/tmp # Persist tmp folder for session/cache
+    depends_on:
+      - db
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
+
+  # Third instance of the Rails application
+  app3:
+    build:
+      context: .
+    container_name: rails_app_3
+    ports:
+      - "3002:3000" # Expose Rails development server on port 3002
+    volumes:
+      - .:/rails # Mount the current directory to the container for live code changes
+      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
+      - tmp:/rails/tmp # Persist tmp folder for session/cache
+    depends_on:
+      - db
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
+
+  # PostgreSQL database service
   db:
     image: postgres:14
     container_name: postgres_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-       # Maps port 5432 of the host to port 5432 inside the container.
-       # Allows the PostgreSQL database to be accessible from the host (useful for debugging with tools like pgAdmin).
     ports:
       - "5432:5432" # Expose PostgreSQL on port 5432
     volumes:
