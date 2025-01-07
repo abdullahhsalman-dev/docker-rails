@@ -90,17 +90,16 @@
 version: "3.8"
 
 services:
-  # First instance of the Rails application
-  app1:
+  app_1:
     build:
       context: .
     container_name: rails_app_1
     ports:
-      - "3000:3000" # Expose Rails development server on port 3000
+      - "3000:3000"
     volumes:
-      - .:/rails # Mount the current directory to the container for live code changes
-      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
-      - tmp:/rails/tmp # Persist tmp folder for session/cache
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - tmp_app_1:/rails/tmp # Separate tmp volume for app_1
     depends_on:
       - db
     environment:
@@ -110,17 +109,16 @@ services:
       DATABASE_PASSWORD: postgres
     command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
 
-  # Second instance of the Rails application
-  app2:
+  app_2:
     build:
       context: .
     container_name: rails_app_2
     ports:
-      - "3001:3000" # Expose Rails development server on port 3001
+      - "3001:3000"
     volumes:
-      - .:/rails # Mount the current directory to the container for live code changes
-      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
-      - tmp:/rails/tmp # Persist tmp folder for session/cache
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - tmp_app_2:/rails/tmp # Separate tmp volume for app_2
     depends_on:
       - db
     environment:
@@ -130,17 +128,16 @@ services:
       DATABASE_PASSWORD: postgres
     command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
 
-  # Third instance of the Rails application
-  app3:
+  app_3:
     build:
       context: .
     container_name: rails_app_3
     ports:
-      - "3002:3000" # Expose Rails development server on port 3002
+      - "3002:3000"
     volumes:
-      - .:/rails # Mount the current directory to the container for live code changes
-      - bundle_cache:/usr/local/bundle # Persist gems across container restarts
-      - tmp:/rails/tmp # Persist tmp folder for session/cache
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - tmp_app_3:/rails/tmp # Separate tmp volume for app_3
     depends_on:
       - db
     environment:
@@ -150,7 +147,6 @@ services:
       DATABASE_PASSWORD: postgres
     command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
 
-  # PostgreSQL database service
   db:
     image: postgres:14
     container_name: postgres_db
@@ -158,11 +154,13 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432" # Expose PostgreSQL on port 5432
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data # Persist database data across container restarts
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:
   bundle_cache:
-  tmp:
+  tmp_app_1:
+  tmp_app_2:
+  tmp_app_3:
