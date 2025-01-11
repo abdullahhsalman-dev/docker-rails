@@ -31,21 +31,20 @@
 # volumes:
 #   postgres_data:
 
-
 # defining the stable verison of the docker compose
 version: "3.8"
 
-# define the services(ie: container) in the application. 
+# define the services(ie: container) in the application.
 # is code se 2 container run ho gay. 1 rails app 2 database.
 services:
   # define the rails application service(container)
   app:
-  # specifies how to build image for this container
+    # specifies how to build image for this container
     build:
-    #     Sets the build context to the current directory (where the Dockerfile resides).
-    # Docker will use the Dockerfile in this directory to build the image.
+      #     Sets the build context to the current directory (where the Dockerfile resides).
+      # Docker will use the Dockerfile in this directory to build the image.
       context: .
-      # set the container name easier for logs 
+      # set the container name easier for logs
     container_name: rails_app
     # map the container ports to the localport so that we can run it on browser
     ports:
@@ -59,20 +58,20 @@ services:
     depends_on:
       - db
     environment:
-      RAILS_ENV: development
-      DATABASE_HOST: db
-      DATABASE_USER: postgres
-      DATABASE_PASSWORD: postgres
-    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'" # Ensure the server starts correctly and handles PID files
+      RAILS_ENV: ${RAILS_ENV}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails s -b '0.0.0.0'"
+  # Ensure the server starts correctly and handles PID files
   # define the postgresql database service.
   db:
     image: postgres:14
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-       # Maps port 5432 of the host to port 5432 inside the container.
-       # Allows the PostgreSQL database to be accessible from the host (useful for debugging with tools like pgAdmin).
+    env_file:
+      - .env # Load variables from .env file
+        # Maps port 5432 of the host to port 5432 inside the container.
+        # Allows the PostgreSQL database to be accessible from the host (useful for debugging with tools like pgAdmin).
     ports:
       - "5432:5432" # Expose PostgreSQL on port 5432
     volumes:
